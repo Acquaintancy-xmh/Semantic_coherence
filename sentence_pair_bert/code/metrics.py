@@ -72,7 +72,7 @@ def acc_and_binary_f1(preds, labels):
 
 def compute_metrics(preds, labels):
     assert len(preds) == len(labels)
-    return spearmanr_score(preds, labels, 30)
+    return acc_and_binary_f1(preds, labels)
     # return acc_and_macro_f1(preds, labels)
 
 

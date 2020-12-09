@@ -58,13 +58,13 @@ from transformers import (WEIGHTS_NAME, BertConfig,
 
 from transformers import AdamW, get_linear_schedule_with_warmup, get_cosine_schedule_with_warmup
 
-from transformers import glue_compute_metrics as compute_metrics
+# from transformers import glue_compute_metrics as compute_metrics
 from transformers import glue_output_modes as output_modes
 from transformers.data.processors import glue_processors as processors
 # from transformers import glue_convert_examples_to_features as convert_examples_to_features
 
 from code.TextProcessing import clean_data
-from code.models import BertForSequenceClassification, BertForSeqClsPlusMean, BertForSequenceClassification_v2, CustomBert
+from code.models import BertForSequenceClassification
 from code.metrics import compute_metrics
 from code.AdversarialTraining import FGM, PGD
 
@@ -75,7 +75,7 @@ ALL_MODELS = sum((tuple(conf.pretrained_config_archive_map.keys()) for conf in (
 
 
 MODEL_CLASSES = {
-    'bert': (BertConfig, CustomBert, BertTokenizer),
+    'bert': (BertConfig, BertForSequenceClassification, BertTokenizer),
     'xlnet': (XLNetConfig, XLNetForSequenceClassification, XLNetTokenizer),
     'xlm': (XLMConfig, XLMForSequenceClassification, XLMTokenizer),
     'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer),
@@ -111,12 +111,12 @@ class InputFeatures(object):
 def read_examples(input_file, is_training):
     examples = []
     if is_training:
-        df = pd.read_csv(input_file)
+        df = pd.read_csv(input_file, delimiter="\t")
         df = clean_data(df, list(df.columns[[1, 2]]))
         for val in df.values:
             examples.append(InputExample(guid=0, text_a=val[1], text_b=val[2], label=val[0]))
     else:
-        df = pd.read_csv(input_file)
+        df = pd.read_csv(input_file, delimiter="\t")
         df = clean_data(df, list(df.columns[[1, 2]]))
         for val in df.values:
             examples.append(InputExample(guid=0, text_a=val[1], text_b=val[2], label=0))
@@ -459,7 +459,7 @@ def evaluate(args, model, tokenizer, prefix=""):
         #     preds = np.argmax(preds, axis=1)
         # elif args.output_mode == "regression":
         #     preds = np.squeeze(preds)
-        # preds = np.argmax(preds, axis=1)
+        preds = np.argmax(preds, axis=1)
         # print(preds)
         # print(out_label_ids)
         # out_label_ids = out_label_ids[::2]

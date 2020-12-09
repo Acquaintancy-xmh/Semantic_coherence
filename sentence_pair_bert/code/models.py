@@ -79,10 +79,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(0.1)
-        self.classifier = nn.Linear(config.hidden_size, 30)
+        self.classifier = nn.Linear(config.hidden_size, 2)
         self.sigmoid = nn.Sigmoid()
 
-        self.softmax = nn.Softmax(dim=0)
+        # self.softmax = nn.Softmax(dim=0)
 
         self.init_weights()
 
@@ -119,7 +119,9 @@ class BertForSequenceClassification(BertPreTrainedModel):
             else:
                 # loss_fct = CrossEntropyLoss()
                 loss_fct = BCELoss()
-                loss = loss_fct(logits, labels.float())
+                labels = labels.to(device='cuda', dtype=torch.int64)
+                labels = torch.zeros(logits.size(0), 2, device='cuda').scatter_(1, labels.view(-1, 1), 1)
+                loss = loss_fct(logits.view(-1, 2), labels)
                 # loss = loss_fct(logits.view(-1, 30), labels.view(-1))
             outputs = (loss,) + outputs
 

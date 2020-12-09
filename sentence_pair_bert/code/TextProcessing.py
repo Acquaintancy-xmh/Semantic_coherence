@@ -90,7 +90,8 @@ def clean_text(x):
 
 
 def clean_numbers(x):
-    x = re.sub('[0-9]{5,}', '#####', x)
+    x = str(x)
+    x = re.sub('[0-9]{5，}', '#####', x)
     x = re.sub('[0-9]{4}', '####', x)
     x = re.sub('[0-9]{3}', '###', x)
     x = re.sub('[0-9]{2}', '##', x)

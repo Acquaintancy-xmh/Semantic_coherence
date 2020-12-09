@@ -1,24 +1,24 @@
 for((i=1;i<2;i++));
 do
 
-python run_glue.py \
---cuda_device 2 \
+CUDA_VISIBLE_DEVICES=3 python run_glue.py \
+--cuda_device 3 \
 --model_type bert \
---model_name_or_path /home/mhxia/workspace/BDCI/bert-base-uncased \
+--model_name_or_path /home/mhxia/workspace/BDCI/chinese_wwm_ext_pytorch \
 --do_train \
---data_dir /home/mhxia/BD/QA_Labeling/data/baseline_fold5/fold_$i \
+--data_dir /home/mhxia/Semantic_coherence/sentence_pair_bert/data/train_dataset \
 --num_labels 2 \
---output_dir /home/mhxia/workspace/my_models/qa_labeling/bert_CustomBert_fold1 \
+--output_dir /home/mhxia/workspace/my_models/Semantic_coherence/sentence_pair_bert/model1 \
 --adversarial None \
---max_seq_length 512 \
---per_gpu_train_batch_size 2 \
---per_gpu_eval_batch_size 2 \
+--max_seq_length 256 \
+--per_gpu_train_batch_size 16 \
+--per_gpu_eval_batch_size 16 \
 --gradient_accumulation_steps 1 \
 --dropout 0.1 \
 --warmup_steps 0 \
 --learning_rate 3e-5 \
 --adam_epsilon 1e-8 \
---logging_steps 608 \
+--logging_steps 1942 \
 --num_train_epochs 20 \
 --evaluate_during_training \
 --early_stop 2 \
